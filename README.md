@@ -1,11 +1,41 @@
-<div align="center">
+# KaamSathi - Enterprise Monorepo Architecture
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Connecting Workers. Creating Opportunities. Building Trust. India's trusted digital labour marketplace empowering daily wage workers with direct bookings and zero commission.
 
-  <h1>Built with AI Studio</h2>
+## Monorepo Structure
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+```
+KaamSathi/
+│
+├── client/              # Customer & Worker React + Vite Application
+├── admin/               # Separate Admin Dashboard React + Vite Application
+├── server/              # Backend Express + MongoDB REST API Service
+├── .gitignore
+└── README.md
+```
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Getting Started
 
-</div>
+### Prerequisites
+- Node.js (v18+)
+- MongoDB / MongoDB Atlas
+
+### Installation
+
+1. Install root & client dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Configure environment variables in:
+   - `client/.env`
+   - `admin/.env`
+   - `server/.env`
+
+3. Run development servers:
+   ```bash
+   npm run dev
+   ```
+
+## License
+MIT KaamSathi Technologies India Pvt. Ltd.

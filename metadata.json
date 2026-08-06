@@ -1,0 +1,6 @@
+{
+  "name": "KaamSathi",
+  "description": "India's digital labour marketplace connecting daily wage workers directly with customers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
