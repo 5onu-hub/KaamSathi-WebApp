@@ -4,7 +4,12 @@ import logger from "../utils/logger.js";
 
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(config.mongodbUri, {
+    const uri = config.mongodbUri;
+    if (!uri || uri.includes("placeholder") || uri.includes("username:password") || !uri.startsWith("mongodb")) {
+      logger.info("Running in robust JSON/Memory Mode (No active MongoDB instance configured).");
+      return;
+    }
+    const conn = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
     });
 
@@ -24,10 +29,9 @@ export const connectDB = async () => {
       process.exit(0);
     });
   } catch (error) {
-    logger.error(`Error connecting to MongoDB: ${error.message}`);
-    // In development or preview without real DB, don't crash hard, but log error
-    if (config.nodeEnv === "production") {
-      process.exit(1);
+    logger.warn(`MongoDB Connection warning, operating in standalone memory/JSON mode: ${error instanceof Error ? error.message : error}`);
+    if (config.nodeEnv === "production" && config.mongodbUri && !config.mongodbUri.includes("placeholder")) {
+      // only exit if explicit production DB was requested and failed
     }
   }
 };

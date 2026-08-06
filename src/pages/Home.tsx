@@ -2,33 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Wrench, ShieldCheck, Star, Search, MapPin, ArrowRight, Zap, Hammer, 
-  Paintbrush, Sparkles, Users, CheckCircle, Clock, DollarSign, Award, 
-  ChevronDown, Mic, MicOff, Navigation, Play, Check, Shield, Flame, Activity,
-  Building2, Trees, Truck, Wind, Tv, Car, UserCheck, QrCode, Smartphone,
-  MessageSquare, Phone, HelpCircle, ArrowUpRight, Globe, Bot, ShieldAlert
+  Wrench, ShieldCheck, Star, Search, MapPin, ArrowRight, Zap, 
+  Sparkles, Users, CheckCircle, Clock, DollarSign, Award, 
+  ChevronDown, Mic, MicOff, Navigation, Check, Shield, Activity,
+  Building2, Home as HomeIcon, Smartphone, MessageSquare, 
+  Phone, ArrowUpRight, Globe, Bot, ShieldAlert, CheckCircle2,
+  Briefcase, HeartHandshake, Headphones, Verified, BadgeCheck
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { WORKER_CATEGORIES, CITIES_LIST, MOCK_WORKERS, TESTIMONIALS, FAQS } from "../constants";
+import { FeaturedWorkersSection } from "../components/home/FeaturedWorkersSection";
 
-// Live Booking Activity Feed Items
+// Live Booking Activity Ticker Items (No emojis, Lucide icons)
 const LIVE_ACTIVITIES = [
-  "🟢 Plumber booked in Connaught Place, Delhi (< 15 mins)",
-  "🟢 Electrician accepted job in Hazratganj, Lucknow",
-  "🟢 AC Repair & Gas filling completed in Noida Sector 62",
-  "🟢 Painter joined from Boring Road, Patna",
-  "🟢 House Helper verified & onboarded in Andheri, Mumbai",
-  "🟢 Carpenter dispatched for modular kitchen in Jaipur"
+  { text: "Plumber booked in Connaught Place, Delhi", time: "< 15 mins ago", icon: <Wrench className="w-4 h-4 text-blue-600" /> },
+  { text: "Electrician accepted job in Hazratganj, Lucknow", time: "Just now", icon: <Zap className="w-4 h-4 text-amber-500" /> },
+  { text: "AC Repair & Gas filling completed in Noida", time: "5 mins ago", icon: <Activity className="w-4 h-4 text-emerald-600" /> },
+  { text: "Painter onboarded from Boring Road, Patna", time: "10 mins ago", icon: <Sparkles className="w-4 h-4 text-purple-600" /> },
+  { text: "House Helper verified in Andheri, Mumbai", time: "12 mins ago", icon: <ShieldCheck className="w-4 h-4 text-emerald-600" /> },
+  { text: "Carpenter dispatched for modular kitchen in Jaipur", time: "18 mins ago", icon: <HomeIcon className="w-4 h-4 text-orange-500" /> }
 ];
 
-// Floating Service Icons data
-const FLOATING_ICONS = [
-  { label: "Plumber", icon: "🔧", top: "15%", left: "4%" },
-  { label: "Electrician", icon: "⚡", top: "25%", right: "6%" },
-  { label: "Painter", icon: "🎨", top: "68%", left: "3%" },
-  { label: "Carpenter", icon: "🪚", top: "75%", right: "5%" },
-  { label: "Cleaner", icon: "🧹", top: "12%", right: "28%" },
-  { label: "AC Repair", icon: "❄️", top: "82%", left: "42%" }
+// Floating Service Pills around Hero
+const FLOATING_SERVICES = [
+  { label: "Plumber", icon: <Wrench className="w-4 h-4" />, top: "18%", left: "4%" },
+  { label: "Electrician", icon: <Zap className="w-4 h-4" />, top: "28%", right: "6%" },
+  { label: "Painter", icon: <Sparkles className="w-4 h-4" />, top: "72%", left: "3%" },
+  { label: "Carpenter", icon: <HomeIcon className="w-4 h-4" />, top: "78%", right: "5%" },
+  { label: "Cleaner", icon: <CheckCircle2 className="w-4 h-4" />, top: "14%", right: "28%" },
+  { label: "AC Repair", icon: <Activity className="w-4 h-4" />, top: "85%", left: "40%" }
 ];
 
 // Interactive Floating Worker Avatars around Hero
@@ -52,13 +54,13 @@ const FLOATING_AVATARS = [
     experience: "6 yrs",
     price: "₹200/hr",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-    top: "18%",
-    right: "10%",
+    top: "20%",
+    right: "8%",
   },
   {
     id: "w3",
     name: "Amit Verma",
-    skill: "Carpenter & Furniture",
+    skill: "Carpenter & Woodwork",
     rating: 4.95,
     experience: "10 yrs",
     price: "₹300/hr",
@@ -74,7 +76,6 @@ export function Home() {
   const [searchCity, setSearchCity] = useState("Delhi NCR");
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
-  const [currentActivityIdx, setCurrentActivityIdx] = useState(0);
   const [hoveredAvatar, setHoveredAvatar] = useState<string | null>(null);
   const [journeyTab, setJourneyTab] = useState<"customer" | "worker">("customer");
 
@@ -96,11 +97,6 @@ export function Home() {
   });
 
   useEffect(() => {
-    // Activity ticker interval
-    const interval = setInterval(() => {
-      setCurrentActivityIdx((prev) => (prev + 1) % LIVE_ACTIVITIES.length);
-    }, 4000);
-
     // Number count up animation
     let startTime = Date.now();
     let duration = 2000;
@@ -119,7 +115,6 @@ export function Home() {
     }, 30);
 
     return () => {
-      clearInterval(interval);
       clearInterval(timer);
     };
   }, []);
@@ -164,7 +159,7 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-blue-600 selection:text-white overflow-x-hidden text-gray-900">
+    <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-blue-600 selection:text-white overflow-x-hidden">
       <Toaster position="top-right" />
 
       {/* ========================================================= */}
@@ -172,29 +167,29 @@ export function Home() {
       {/* ========================================================= */}
       <section className="relative min-h-[92vh] flex items-center justify-center bg-gradient-to-b from-blue-950 via-slate-900 to-indigo-950 text-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         
-        {/* Background Animated Gradient Mesh & Glowing Blobs */}
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[128px] animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-[32rem] h-[32rem] bg-indigo-600 rounded-full blur-[160px] animate-pulse delay-1000"></div>
-          <div className="absolute top-10 right-10 w-72 h-72 bg-orange-500 rounded-full blur-[140px] opacity-60"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:40px_40px] opacity-15"></div>
+        {/* Background Gradient Mesh */}
+        <div className="absolute inset-0 opacity-25 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[140px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[32rem] h-[32rem] bg-indigo-600 rounded-full blur-[180px] animate-pulse delay-1000"></div>
+          <div className="absolute top-10 right-10 w-72 h-72 bg-orange-500 rounded-full blur-[140px] opacity-50"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:40px_40px] opacity-10"></div>
         </div>
 
-        {/* Floating Service Icons around Hero */}
-        {FLOATING_ICONS.map((item, idx) => (
+        {/* Floating Service Pills */}
+        {FLOATING_SERVICES.map((item, idx) => (
           <motion.div
             key={idx}
-            animate={{ y: [0, -14, 0], rotate: [0, 5, -5, 0] }}
+            animate={{ y: [0, -12, 0], rotate: [0, 3, -3, 0] }}
             transition={{ duration: 4 + idx, repeat: Infinity, ease: "easeInOut" }}
             style={{ top: item.top, left: item.left, right: item.right }}
-            className="absolute hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl text-xs font-bold text-white z-20 pointer-events-none"
+            className="absolute hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl text-xs font-bold text-white z-20 pointer-events-none"
           >
-            <span className="text-base">{item.icon}</span>
+            <span className="text-blue-400">{item.icon}</span>
             <span>{item.label}</span>
           </motion.div>
         ))}
 
-        {/* Interactive Floating Worker Avatars with Hover Popups */}
+        {/* Interactive Floating Worker Avatars */}
         {FLOATING_AVATARS.map((av) => (
           <div
             key={av.id}
@@ -213,7 +208,6 @@ export function Home() {
                 <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
               </div>
 
-              {/* Hover Mini Popup Card */}
               {hoveredAvatar === av.id && (
                 <motion.div 
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -245,7 +239,7 @@ export function Home() {
 
         <div className="max-w-5xl mx-auto relative z-30 text-center space-y-8">
           
-          {/* Small Animated Badge */}
+          {/* Badge */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -253,10 +247,10 @@ export function Home() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500/20 to-orange-500/20 text-blue-300 text-xs font-bold tracking-wide border border-blue-400/30 shadow-lg backdrop-blur-md"
           >
             <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
-            🇮🇳 India's Trusted Labour Marketplace • 0% Commission for Workers
+            India's Trusted Labour Marketplace • 0% Commission for Workers
           </motion.div>
 
-          {/* Large Headline with Animated Shimmer Gradient */}
+          {/* Headline */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -265,7 +259,7 @@ export function Home() {
           >
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08]">
               Find Skilled Workers Near You <br />
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-orange-400 bg-clip-text text-transparent animate-pulse">
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-orange-400 bg-clip-text text-transparent">
                 Within Minutes.
               </span>
             </h1>
@@ -274,28 +268,7 @@ export function Home() {
             </p>
           </motion.div>
 
-          {/* Floating Live Booking Activity Ticker */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-xs font-semibold text-emerald-300 backdrop-blur-md shadow-lg"
-          >
-            <Activity className="w-4 h-4 text-emerald-400 animate-spin" />
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={currentActivityIdx}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.3 }}
-              >
-                {LIVE_ACTIVITIES[currentActivityIdx]}
-              </motion.span>
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Large Floating Search Component */}
+          {/* Search Box Component */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -345,18 +318,18 @@ export function Home() {
               </button>
             </form>
 
-            {/* Popular services chips */}
+            {/* Popular searches */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-3 text-xs font-semibold text-blue-200">
               <span className="text-white/70">Popular Searches:</span>
-              <Link to="/search/results?q=Electrician" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">⚡ Electrician</Link>
-              <Link to="/search/results?q=Plumber" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">🔧 Plumber</Link>
-              <Link to="/search/results?q=Carpenter" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">🪚 Carpenter</Link>
-              <Link to="/search/results?q=Deep+Cleaning" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">🧹 Deep Cleaning</Link>
-              <Link to="/search/results?q=AC+Repair" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">❄️ AC Repair</Link>
+              <Link to="/workers?q=Electrician" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">Electrician</Link>
+              <Link to="/workers?q=Plumber" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">Plumber</Link>
+              <Link to="/workers?q=Carpenter" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">Carpenter</Link>
+              <Link to="/workers?q=Cleaning" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">Deep Cleaning</Link>
+              <Link to="/workers?q=AC" className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/10">AC Repair</Link>
             </div>
           </motion.div>
 
-          {/* CTA Buttons with Ripple & Magnetic Hover */}
+          {/* CTA Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <button 
               onClick={() => navigate("/workers")}
@@ -377,18 +350,19 @@ export function Home() {
               onClick={() => navigate("/map")}
               className="px-8 py-3.5 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-bold text-sm border border-emerald-500/30 backdrop-blur-md transition-all hover:scale-105 flex items-center gap-2"
             >
-              <Navigation className="w-4 h-4 text-emerald-400" /> Watch Demo
+              <Navigation className="w-4 h-4 text-emerald-400" /> Watch Live Map
             </button>
           </div>
 
           {/* Trust Badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
-            {["✓ Aadhaar Verified", "✓ Background Checked", "✓ Police Verified", "✓ Top Rated", "✓ Emergency Available"].map((badge, idx) => (
+            {["Aadhaar Verified", "Background Checked", "Police Verified", "Top Rated", "Emergency Available"].map((badge, idx) => (
               <div 
                 key={idx}
-                className="px-4 py-2 rounded-2xl bg-white/5 border border-white/15 text-xs font-bold text-blue-100 backdrop-blur-sm hover:border-orange-400 hover:shadow-lg hover:shadow-orange-500/20 transition-all cursor-default"
+                className="px-4 py-2 rounded-2xl bg-white/5 border border-white/15 text-xs font-bold text-blue-100 backdrop-blur-sm flex items-center gap-1.5"
               >
-                {badge}
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{badge}</span>
               </div>
             ))}
           </div>
@@ -398,9 +372,9 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 1: TRUSTED BY INDIA (Animated Statistics) */}
+      {/* SECTION 1: STATISTICS (Glassmorphism & Animated Counters) */}
       {/* ========================================================= */}
-      <section className="py-20 bg-gradient-to-b from-indigo-950 to-slate-900 text-white border-y border-white/10">
+      <section className="py-20 bg-slate-900 text-white border-y border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold text-orange-400 uppercase tracking-widest bg-orange-500/20 px-4 py-1 rounded-full border border-orange-500/30">
@@ -411,38 +385,38 @@ export function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-blue-400 transition-colors">
-              <span className="text-2xl mb-2 block">👷</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-blue-400 transition-all group">
+              <Users className="w-7 h-7 text-blue-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl sm:text-3xl font-black text-white">{stats.workers.toLocaleString()}+</h3>
               <p className="text-xs text-blue-200 font-semibold mt-1">Verified Workers</p>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-emerald-400 transition-colors">
-              <span className="text-2xl mb-2 block">🏠</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-emerald-400 transition-all group">
+              <HomeIcon className="w-7 h-7 text-emerald-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl sm:text-3xl font-black text-white">{stats.jobs.toLocaleString()}+</h3>
               <p className="text-xs text-blue-200 font-semibold mt-1">Completed Jobs</p>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-orange-400 transition-colors">
-              <span className="text-2xl mb-2 block">🏙️</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-orange-400 transition-all group">
+              <Building2 className="w-7 h-7 text-orange-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl sm:text-3xl font-black text-white">{stats.cities}+</h3>
               <p className="text-xs text-blue-200 font-semibold mt-1">Cities Covered</p>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-amber-400 transition-colors">
-              <span className="text-2xl mb-2 block">⭐</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-amber-400 transition-all group">
+              <Star className="w-7 h-7 text-amber-400 mx-auto mb-3 group-hover:scale-110 transition-transform fill-current" />
               <h3 className="text-2xl sm:text-3xl font-black text-amber-400">{stats.rating}★</h3>
               <p className="text-xs text-blue-200 font-semibold mt-1">Average Rating</p>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-cyan-400 transition-colors">
-              <span className="text-2xl mb-2 block">⚡</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-cyan-400 transition-all group">
+              <Zap className="w-7 h-7 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl sm:text-3xl font-black text-white">{stats.success}%</h3>
-              <p className="text-xs text-blue-200 font-semibold mt-1">Booking Success Rate</p>
+              <p className="text-xs text-blue-200 font-semibold mt-1">Success Rate</p>
             </div>
 
-            <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-purple-400 transition-colors">
-              <span className="text-2xl mb-2 block">😊</span>
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-xl text-center hover:border-purple-400 transition-all group">
+              <HeartHandshake className="w-7 h-7 text-purple-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="text-2xl sm:text-3xl font-black text-white">{stats.customers.toLocaleString()}+</h3>
               <p className="text-xs text-blue-200 font-semibold mt-1">Happy Customers</p>
             </div>
@@ -452,13 +426,13 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 2: POPULAR CATEGORIES */}
+      {/* SECTION 2: POPULAR CATEGORIES (Light Gray Background) */}
       {/* ========================================================= */}
-      <section className="py-24 bg-gray-50/70">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-3">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100/70 px-4 py-1.5 rounded-full">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">
                 Popular Categories
               </span>
               <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Explore Skilled Worker Categories</h2>
@@ -480,13 +454,12 @@ export function Home() {
                 whileHover={{ y: -6, scale: 1.02 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => navigate(`/services/${cat.id}`)}
-                className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-md hover:shadow-2xl transition-all cursor-pointer group flex flex-col justify-between relative overflow-hidden"
+                className="bg-white rounded-3xl p-6 border border-gray-200 shadow-xs hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between relative overflow-hidden"
               >
-                {/* Background Gradient Glow on Hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
 
                 <div className="space-y-4 relative z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-xs">
                     <Wrench className="w-7 h-7" />
                   </div>
                   <div>
@@ -510,7 +483,7 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 3: HOW KAAMSATHI WORKS (Animated Timeline) */}
+      {/* SECTION 3: HOW KAAMSATHI WORKS (White Background) */}
       {/* ========================================================= */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -522,7 +495,6 @@ export function Home() {
             <p className="text-xs sm:text-sm text-gray-600">Seamless digital journeys designed for both homeowners and daily wage professionals.</p>
           </div>
 
-          {/* Toggle Tabs */}
           <div className="flex justify-center">
             <div className="inline-flex bg-gray-100 p-1.5 rounded-2xl shadow-inner">
               <button
@@ -540,7 +512,6 @@ export function Home() {
             </div>
           </div>
 
-          {/* Timeline Steps */}
           <div className="max-w-4xl mx-auto pt-6">
             {journeyTab === "customer" ? (
               <div className="space-y-6">
@@ -558,7 +529,7 @@ export function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-5 p-6 rounded-3xl bg-gray-50/80 border border-gray-200/80 shadow-sm hover:shadow-md transition-all"
+                    className="flex items-start gap-5 p-6 rounded-3xl bg-gray-50 border border-gray-200 shadow-xs hover:shadow-md transition-all"
                   >
                     <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md">
                       {item.step}
@@ -585,7 +556,7 @@ export function Home() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-5 p-6 rounded-3xl bg-orange-50/50 border border-orange-200/60 shadow-sm hover:shadow-md transition-all"
+                    className="flex items-start gap-5 p-6 rounded-3xl bg-orange-50 border border-orange-200 shadow-xs hover:shadow-md transition-all"
                   >
                     <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md">
                       {item.step}
@@ -604,14 +575,14 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 4: LIVE ACTIVITY FEED */}
+      {/* SECTION 4: AUTO-SCROLLING LIVE ACTIVITY TICKER */}
       {/* ========================================================= */}
-      <section className="py-16 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white">
+      <section className="py-16 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="space-y-2 text-center md:text-left">
               <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/20 px-3.5 py-1 rounded-full border border-emerald-400/30">
-                Live Activity Board
+                Live Activity Stream
               </span>
               <h2 className="text-2xl sm:text-3xl font-black">Real-Time Bookings Across India</h2>
             </div>
@@ -621,111 +592,36 @@ export function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {LIVE_ACTIVITIES.map((act, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md shadow-lg flex items-center gap-3"
-              >
-                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping shrink-0"></div>
-                <p className="text-xs sm:text-sm font-semibold text-blue-100">{act}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* ========================================================= */}
-      {/* SECTION 5: FEATURED WORKERS CAROUSEL / GRID */}
-      {/* ========================================================= */}
-      <section className="py-24 bg-gray-50/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-3">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100/70 px-4 py-1.5 rounded-full">
-                Featured Professionals
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Top-Rated Verified Workers Available Today</h2>
-              <p className="text-xs sm:text-sm text-gray-600">Connect instantly via chat, call, or direct booking.</p>
+          {/* Auto-scrolling ticker track */}
+          <div className="relative w-full overflow-hidden py-2">
+            <div className="animate-marquee flex gap-6">
+              {[...LIVE_ACTIVITIES, ...LIVE_ACTIVITIES, ...LIVE_ACTIVITIES].map((act, idx) => (
+                <div 
+                  key={idx}
+                  className="px-6 py-4 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-md flex items-center gap-3 shrink-0 shadow-lg"
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
+                  <div className="p-2 rounded-xl bg-white/10">{act.icon}</div>
+                  <div>
+                    <div className="text-xs sm:text-sm font-bold text-white">{act.text}</div>
+                    <div className="text-[11px] text-emerald-300">{act.time}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Link 
-              to="/workers" 
-              className="px-6 py-3 rounded-2xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-white transition-colors inline-flex items-center gap-2 w-fit shadow-xs"
-            >
-              <span>Explore All Workers</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {MOCK_WORKERS.map((worker) => (
-              <motion.div 
-                key={worker.id}
-                whileHover={{ y: -6 }}
-                className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-6"
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <img src={worker.avatar} alt={worker.name} className="w-14 h-14 rounded-2xl object-cover border-2 border-orange-100 shadow-sm" />
-                    <div>
-                      <h4 className="font-black text-gray-900 text-base">{worker.name}</h4>
-                      <span className="text-xs font-bold text-blue-600">{worker.skill}</span>
-                      <p className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Aadhaar Verified
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-xs text-gray-600 pt-3 border-t border-gray-100 font-semibold">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Experience:</span>
-                      <span className="text-gray-800">{worker.experience}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Hourly Rate:</span>
-                      <span className="text-emerald-700 font-black">₹{worker.hourlyRate}/hr</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">City Location:</span>
-                      <span className="text-gray-800">{worker.city}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-100 flex items-center gap-2">
-                  <button 
-                    onClick={() => navigate(`/messages/${worker.id}`)}
-                    className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
-                    title="Chat"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                  </button>
-                  <button 
-                    onClick={() => navigate(`/workers/${worker.id}`)}
-                    className="flex-1 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Profile
-                  </button>
-                  <button 
-                    onClick={() => navigate(`/workers/${worker.id}`)}
-                    className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all"
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
 
 
       {/* ========================================================= */}
-      {/* SECTION 6: CUSTOMER REVIEWS (Testimonials) */}
+      {/* SECTION 5: FEATURED WORKERS (Light Gray Background) */}
+      {/* ========================================================= */}
+      <FeaturedWorkersSection />
+
+
+      {/* ========================================================= */}
+      {/* SECTION 6: CUSTOMER REVIEWS (White Background) */}
       {/* ========================================================= */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -742,7 +638,7 @@ export function Home() {
               <motion.div 
                 key={t.id}
                 whileHover={{ y: -4 }}
-                className="bg-gray-50/80 rounded-3xl p-8 border border-gray-200/80 shadow-sm space-y-6 flex flex-col justify-between"
+                className="bg-gray-50 rounded-3xl p-8 border border-gray-200 shadow-xs space-y-6 flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   <div className="flex items-center gap-1 text-amber-500">
@@ -753,7 +649,7 @@ export function Home() {
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed italic">"{t.content}"</p>
                 </div>
 
-                <div className="flex items-center gap-4 pt-4 border-t border-gray-200/60">
+                <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
                   <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md" />
                   <div>
                     <h4 className="font-bold text-gray-900 text-xs sm:text-sm">{t.name}</h4>
@@ -768,12 +664,12 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 7: WHY CHOOSE KAAMSATHI */}
+      {/* SECTION 7: WHY CHOOSE KAAMSATHI (Light Gray Background) */}
       {/* ========================================================= */}
-      <section className="py-24 bg-gray-50/70">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100/70 px-4 py-1.5 rounded-full">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">
               Why Choose Us
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">The KaamSathi Advantage</h2>
@@ -788,13 +684,13 @@ export function Home() {
               { icon: <ShieldAlert className="w-6 h-6 text-orange-600" />, title: "Emergency Hiring", desc: "Urgent dispatch within 30 minutes for emergency plumbing or electrical." },
               { icon: <Check className="w-6 h-6 text-indigo-600" />, title: "Transparent Pricing", desc: "Clear hourly and daily wage rates with no hidden fees." },
               { icon: <Navigation className="w-6 h-6 text-cyan-600" />, title: "Real-Time Tracking", desc: "OpenStreetMap live tracking monitors your worker's arrival." },
-              { icon: <Clock className="w-6 h-6 text-amber-600" />, title: "24x7 Support", desc: "Dedicated customer care ready to assist you round the clock." },
+              { icon: <Headphones className="w-6 h-6 text-amber-600" />, title: "24x7 Support", desc: "Dedicated customer care ready to assist you round the clock." },
               { icon: <Award className="w-6 h-6 text-rose-600" />, title: "Secure Payments", desc: "Pay safely via UPI, cards, or cash after satisfactory job completion." }
             ].map((feature, idx) => (
               <motion.div 
                 key={idx}
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-sm hover:shadow-xl transition-all space-y-4"
+                className="bg-white rounded-3xl p-6 border border-gray-200 shadow-xs hover:shadow-xl transition-all space-y-4"
               >
                 <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-100 shadow-inner">
                   {feature.icon}
@@ -809,7 +705,7 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 8: AI SAATHI (Interactive AI Showcase) */}
+      {/* SECTION 8: AI SAATHI INTERACTIVE CHAT (Dark Gradient) */}
       {/* ========================================================= */}
       <section className="py-24 bg-gradient-to-br from-indigo-950 via-blue-950 to-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
@@ -836,19 +732,19 @@ export function Home() {
                 onClick={() => setAiPrompt("Find a plumber in Delhi")}
                 className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold border border-white/20 transition-all"
               >
-                💬 "Find a plumber in Delhi"
+                "Find a plumber in Delhi"
               </button>
               <button 
                 onClick={() => setAiPrompt("Electrician rates")}
                 className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold border border-white/20 transition-all"
               >
-                💬 "Electrician hourly rates"
+                "Electrician hourly rates"
               </button>
             </div>
           </div>
 
           <div className="lg:col-span-6">
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl space-y-4">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/25 shadow-2xl space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black shadow-lg">
@@ -903,7 +799,7 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 9: DOWNLOAD APP */}
+      {/* SECTION 9: DOWNLOAD APP (White Background) */}
       {/* ========================================================= */}
       <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -924,7 +820,7 @@ export function Home() {
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <div className="p-3 bg-white rounded-2xl shadow-xl flex items-center gap-3">
-                  <QrCode className="w-12 h-12 text-blue-900" />
+                  <Smartphone className="w-10 h-10 text-blue-900" />
                   <div className="text-xs text-gray-900">
                     <strong className="block font-black">Scan to Download</strong>
                     <span className="text-gray-500">Android & iOS</span>
@@ -932,7 +828,7 @@ export function Home() {
                 </div>
 
                 <button className="px-6 py-3.5 bg-white text-gray-900 hover:bg-blue-50 font-black rounded-2xl shadow-xl transition-all text-xs sm:text-sm flex items-center gap-2">
-                  <span>Google Play</span>
+                  <span>Google Play Store</span>
                   <ArrowRight className="w-4 h-4 text-blue-600" />
                 </button>
               </div>
@@ -968,12 +864,12 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 10: FAQ */}
+      {/* SECTION 10: FAQ (Light Gray Background) */}
       {/* ========================================================= */}
-      <section className="py-24 bg-gray-50/70">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-3">
-            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100/70 px-4 py-1.5 rounded-full">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">
               FAQ
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Frequently Asked Questions</h2>
@@ -987,7 +883,7 @@ export function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xs transition-all"
+                className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xs transition-all"
               >
                 <button 
                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
@@ -1016,7 +912,7 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 11: CALL TO ACTION */}
+      {/* SECTION 11: CALL TO ACTION (Primary Gradient) */}
       {/* ========================================================= */}
       <section className="py-24 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px]"></div>
@@ -1053,58 +949,9 @@ export function Home() {
       </section>
 
 
-      {/* ========================================================= */}
-      {/* SECTION 12: FOOTER */}
-      {/* ========================================================= */}
-      <footer className="bg-slate-950 text-white py-16 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-          
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-orange-500 flex items-center justify-center text-white font-black text-lg shadow-lg">
-                KS
-              </div>
-              <span className="text-xl font-black tracking-tight text-white">KaamSathi</span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-              India's premier trusted labour marketplace connecting verified daily wage earners, plumbers, electricians, and technicians with local homeowners.
-            </p>
-            <p className="text-xs text-slate-500 font-semibold">© 2026 KaamSathi Technologies India Pvt. Ltd. All rights reserved.</p>
-          </div>
 
-          <div className="space-y-3">
-            <h4 className="font-black text-sm text-white uppercase tracking-wider">Company</h4>
-            <ul className="space-y-2 text-xs text-slate-400 font-medium">
-              <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link to="/press" className="hover:text-white transition-colors">Press & Media</Link></li>
-              <li><Link to="/blog" className="hover:text-white transition-colors">Blog & Stories</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <h4 className="font-black text-sm text-white uppercase tracking-wider">Services</h4>
-            <ul className="space-y-2 text-xs text-slate-400 font-medium">
-              <li><Link to="/services/plumbing" className="hover:text-white transition-colors">Plumbing & Pipe Repair</Link></li>
-              <li><Link to="/services/electrical" className="hover:text-white transition-colors">Electrical & Wiring</Link></li>
-              <li><Link to="/services/carpentry" className="hover:text-white transition-colors">Carpentry & Woodwork</Link></li>
-              <li><Link to="/services/cleaning" className="hover:text-white transition-colors">Deep Home Cleaning</Link></li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <h4 className="font-black text-sm text-white uppercase tracking-wider">Support & Legal</h4>
-            <ul className="space-y-2 text-xs text-slate-400 font-medium">
-              <li><Link to="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-              <li><Link to="/safety" className="hover:text-white transition-colors">Safety & Verification</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-            </ul>
-          </div>
-
-        </div>
-      </footer>
 
     </div>
   );
 }
+export default Home;

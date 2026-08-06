@@ -1,19 +1,23 @@
 import React, { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { GuestLayout } from "../layouts/GuestLayout";
 import { CustomerLayout } from "../layouts/CustomerLayout";
 import { WorkerLayout } from "../layouts/WorkerLayout";
 import { AdminLayout } from "../layouts/AdminLayout";
+import { PremiumLoader, PageSkeleton } from "../components/common/PremiumLoader";
 
-// Loading Fallback Component
-const LoadingFallback = () => (
-  <div className="min-h-[60vh] flex items-center justify-center bg-gray-50/50">
-    <div className="flex flex-col items-center gap-3">
-      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Loading KaamSathi Page...</p>
-    </div>
-  </div>
-);
+// Intelligent loader component based on current path
+const DynamicLoadingFallback = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  let dest: "home" | "workers" | "booking" | "profile" | "dashboard" = "home";
+  if (path.includes("worker")) dest = "workers";
+  else if (path.includes("booking")) dest = "booking";
+  else if (path.includes("dashboard")) dest = "dashboard";
+  else if (path.includes("profile")) dest = "profile";
+
+  return <PremiumLoader destination={dest} />;
+};
 
 // Lazy Loaded Pages
 const Home = lazy(() => import("../pages/Home").then(m => ({ default: m.Home })));
@@ -74,7 +78,7 @@ const MapExplorer = lazy(() => import("../pages/searchMap/MapExplorer").then(m =
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={<DynamicLoadingFallback />}>
       <Routes>
         {/* Standalone Auth & Chat Routes */}
         <Route path="/sign-in/*" element={<SignInPage />} />
