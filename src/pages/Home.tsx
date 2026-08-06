@@ -12,6 +12,9 @@ import {
 import toast, { Toaster } from "react-hot-toast";
 import { WORKER_CATEGORIES, CITIES_LIST, MOCK_WORKERS, TESTIMONIALS, FAQS } from "../constants";
 import { FeaturedWorkersSection } from "../components/home/FeaturedWorkersSection";
+import { HowKaamSathiWorksSection } from "../components/home/HowKaamSathiWorksSection";
+import { TestimonialsSection } from "../components/home/TestimonialsSection";
+import { AiSaathiShowcaseSection } from "../components/home/AiSaathiShowcaseSection";
 
 // Live Booking Activity Ticker Items (No emojis, Lucide icons)
 const LIVE_ACTIVITIES = [
@@ -77,7 +80,6 @@ export function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [hoveredAvatar, setHoveredAvatar] = useState<string | null>(null);
-  const [journeyTab, setJourneyTab] = useState<"customer" | "worker">("customer");
 
   // AI Saathi state
   const [aiPrompt, setAiPrompt] = useState("");
@@ -483,95 +485,9 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 3: HOW KAAMSATHI WORKS (White Background) */}
+      {/* SECTION 3: HOW KAAMSATHI WORKS */}
       {/* ========================================================= */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-orange-600 uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full">
-              Process & Timeline
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">How KaamSathi Works</h2>
-            <p className="text-xs sm:text-sm text-gray-600">Seamless digital journeys designed for both homeowners and daily wage professionals.</p>
-          </div>
-
-          <div className="flex justify-center">
-            <div className="inline-flex bg-gray-100 p-1.5 rounded-2xl shadow-inner">
-              <button
-                onClick={() => setJourneyTab("customer")}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all ${journeyTab === 'customer' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
-              >
-                Customer Journey
-              </button>
-              <button
-                onClick={() => setJourneyTab("worker")}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all ${journeyTab === 'worker' ? 'bg-orange-500 text-white shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
-              >
-                Worker Journey
-              </button>
-            </div>
-          </div>
-
-          <div className="max-w-4xl mx-auto pt-6">
-            {journeyTab === "customer" ? (
-              <div className="space-y-6">
-                {[
-                  { step: "01", title: "Search Worker", desc: "Enter your service need & city to browse verified local professionals instantly." },
-                  { step: "02", title: "Compare Profiles", desc: "Check Aadhaar badges, ratings, experience years, and transparent hourly charges." },
-                  { step: "03", title: "Book Worker", desc: "Confirm booking date, time, and location with zero upfront commission." },
-                  { step: "04", title: "Worker Arrives", desc: "Real-time OpenStreetMap tracking guides the professional straight to your doorstep." },
-                  { step: "05", title: "Complete Work", desc: "Inspect completed repair or construction work with absolute satisfaction." },
-                  { step: "06", title: "Rate Worker", desc: "Leave honest reviews to help the community and reward skilled laborers." }
-                ].map((item, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-5 p-6 rounded-3xl bg-gray-50 border border-gray-200 shadow-xs hover:shadow-md transition-all"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h4 className="font-black text-gray-900 text-base mb-1">{item.title}</h4>
-                      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {[
-                  { step: "01", title: "Register Profile", desc: "Sign up with your mobile number and select your specialized skill category." },
-                  { step: "02", title: "Get Verified", desc: "Instant Aadhaar and police verification builds lifetime trust with homeowners." },
-                  { step: "03", title: "Receive Jobs", desc: "Get instant nearby job notifications directly on your phone with fair pricing." },
-                  { step: "04", title: "Complete Work", desc: "Deliver high quality work and build your stellar local reputation." },
-                  { step: "05", title: "Receive Payment", desc: "Keep 100% of your earnings with zero platform commission fees." }
-                ].map((item, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-5 p-6 rounded-3xl bg-orange-50 border border-orange-200 shadow-xs hover:shadow-md transition-all"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h4 className="font-black text-gray-900 text-base mb-1">{item.title}</h4>
-                      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+      <HowKaamSathiWorksSection />
 
 
       {/* ========================================================= */}
@@ -705,101 +621,19 @@ export function Home() {
 
 
       {/* ========================================================= */}
-      {/* SECTION 8: AI SAATHI INTERACTIVE CHAT (Dark Gradient) */}
+      {/* SECTION 8: AI SAATHI SHOWCASE SECTION */}
       {/* ========================================================= */}
-      <section className="py-24 bg-gradient-to-br from-indigo-950 via-blue-950 to-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-cyan-500 rounded-full blur-[140px] animate-pulse"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest bg-cyan-500/20 px-4 py-1.5 rounded-full border border-cyan-400/30">
-              AI Saathi Intelligence
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Meet AI Saathi <br />
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Your Smart Labour Assistant
-              </span>
-            </h2>
-            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
-              Ask questions in Hindi, English, or regional languages. AI Saathi instantly calculates travel ETAs, compares hourly charges, and books the exact professional you need.
-            </p>
-
-            <div className="flex flex-wrap gap-3 pt-2">
-              <button 
-                onClick={() => setAiPrompt("Find a plumber in Delhi")}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold border border-white/20 transition-all"
-              >
-                "Find a plumber in Delhi"
-              </button>
-              <button 
-                onClick={() => setAiPrompt("Electrician rates")}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold border border-white/20 transition-all"
-              >
-                "Electrician hourly rates"
-              </button>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6">
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/25 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black shadow-lg">
-                    AI
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-white">AI Saathi Assistant</h4>
-                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">● Online • Multilingual</span>
-                  </div>
-                </div>
-                <Globe className="w-5 h-5 text-cyan-400" />
-              </div>
-
-              {/* Chat Log */}
-              <div className="space-y-3 h-72 overflow-y-auto pr-2">
-                {aiChatLog.map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-xs' : 'bg-white/10 text-blue-100 rounded-bl-xs border border-white/10'}`}>
-                      {msg.text}
-                    </div>
-                  </div>
-                ))}
-                {isAiLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-white/10 p-3 rounded-2xl text-xs text-blue-200 animate-pulse">
-                      AI Saathi is thinking...
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Input Form */}
-              <form onSubmit={handleAiSend} className="flex gap-2 pt-2 border-t border-white/10">
-                <input 
-                  type="text" 
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder="Ask AI Saathi anything..." 
-                  className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-blue-300 focus:outline-hidden"
-                />
-                <button 
-                  type="submit"
-                  className="px-5 py-3 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black rounded-xl text-xs shadow-lg transition-all"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AiSaathiShowcaseSection />
 
 
       {/* ========================================================= */}
-      {/* SECTION 9: DOWNLOAD APP (White Background) */}
+      {/* SECTION 9: TESTIMONIALS & SUCCESS STORIES */}
+      {/* ========================================================= */}
+      <TestimonialsSection />
+
+
+      {/* ========================================================= */}
+      {/* SECTION 10: DOWNLOAD APP (White Background) */}
       {/* ========================================================= */}
       <section className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

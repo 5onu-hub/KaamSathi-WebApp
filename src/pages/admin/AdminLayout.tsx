@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, Users, UserCheck, Calendar, Grid, CreditCard, DollarSign,
   AlertCircle, Bell, BarChart3, FileText, Bot, Settings, ShieldCheck, 
-  LogOut, Menu, X, Search, ChevronRight, Shield, ShieldAlert
+  LogOut, Menu, X, Search, ChevronRight, Shield, ShieldAlert, Wrench, Star, LifeBuoy
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -15,6 +15,9 @@ export function AdminLayout() {
 
   const navItems = [
     { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
+    { label: "Services Management", path: "/admin/services", icon: Wrench },
+    { label: "Reviews & Ratings", path: "/admin/reviews", icon: Star },
+    { label: "Support & Help Desk", path: "/admin/support", icon: LifeBuoy },
     { label: "Users", path: "/admin/users", icon: Users },
     { label: "Workers", path: "/admin/workers", icon: UserCheck },
     { label: "Verifications", path: "/admin/verifications", icon: ShieldCheck },

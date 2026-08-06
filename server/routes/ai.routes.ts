@@ -304,4 +304,224 @@ router.put("/history/:id", (req, res) => {
   }
 });
 
+// 7. GET /api/v1/ai/recommendations - Smart Matching & Recommendations Engine
+router.get("/recommendations", (req, res) => {
+  try {
+    const { category = "electrician", location = "Delhi NCR", type = "Best Overall", maxPrice = "1000" } = req.query;
+    
+    // Sample scored workers pool
+    const mockWorkers = [
+      {
+        id: "w1",
+        name: "Ramesh Kumar",
+        category: "electrician",
+        categoryName: "Electrician",
+        rating: 4.9,
+        reviewsCount: 142,
+        experienceYears: 8,
+        hourlyRate: 250,
+        location: "South Delhi, Delhi",
+        distanceKm: 1.2,
+        responseTimeMins: 12,
+        acceptanceRate: 98,
+        completionRate: 99,
+        cancellationRate: 1.2,
+        availability: "Available Today",
+        emergencyAvailable: true,
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200",
+        score: 96,
+        confidenceScore: 98,
+        reason: "Closest to your location (1.2 km) with 99% completion rate and lightning-fast response.",
+        priceCategory: "Budget",
+        marketPrice: 350,
+        savings: "₹100/hr cheaper than market avg"
+      },
+      {
+        id: "w2",
+        name: "Suresh Sharma",
+        category: "plumber",
+        categoryName: "Plumber",
+        rating: 4.8,
+        reviewsCount: 98,
+        experienceYears: 10,
+        hourlyRate: 300,
+        location: "Connaught Place, Delhi",
+        distanceKm: 2.5,
+        responseTimeMins: 18,
+        acceptanceRate: 95,
+        completionRate: 97,
+        cancellationRate: 2.5,
+        availability: "Available Today",
+        emergencyAvailable: true,
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200",
+        score: 93,
+        confidenceScore: 95,
+        reason: "10 years experience with highest customer satisfaction in plumbing repairs.",
+        priceCategory: "Average",
+        marketPrice: 300,
+        savings: "Fair standard market price"
+      },
+      {
+        id: "w3",
+        name: "Amit Verma",
+        category: "carpenter",
+        categoryName: "Carpenter",
+        rating: 4.7,
+        reviewsCount: 76,
+        experienceYears: 6,
+        hourlyRate: 350,
+        location: "Sector 62, Noida",
+        distanceKm: 3.8,
+        responseTimeMins: 25,
+        acceptanceRate: 92,
+        completionRate: 95,
+        cancellationRate: 3.0,
+        availability: "Available Tomorrow",
+        emergencyAvailable: false,
+        avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200",
+        score: 89,
+        confidenceScore: 91,
+        reason: "Master modular carpenter with 180+ successful furniture assembly projects.",
+        priceCategory: "Premium",
+        marketPrice: 350,
+        savings: "Expert craftsmanship tier"
+      },
+      {
+        id: "w4",
+        name: "Pooja Devi",
+        category: "cleaner",
+        categoryName: "House Cleaner",
+        rating: 4.9,
+        reviewsCount: 210,
+        experienceYears: 5,
+        hourlyRate: 200,
+        location: "Phase 4, Gurugram",
+        distanceKm: 1.9,
+        responseTimeMins: 10,
+        acceptanceRate: 99,
+        completionRate: 100,
+        cancellationRate: 0.5,
+        availability: "Available Today",
+        emergencyAvailable: true,
+        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200",
+        score: 98,
+        confidenceScore: 99,
+        reason: "Zero cancellation rate, verified police check, and top-rated deep cleaning expert.",
+        priceCategory: "Budget",
+        marketPrice: 280,
+        savings: "₹80/hr cheaper than market avg"
+      }
+    ];
+
+    let filtered = mockWorkers;
+    if (category && category !== "all") {
+      filtered = filtered.filter(w => w.category.toLowerCase() === String(category).toLowerCase());
+    }
+
+    // Sort according to type
+    if (type === "Highest Rated") {
+      filtered.sort((a, b) => b.rating - a.rating);
+    } else if (type === "Nearest Worker") {
+      filtered.sort((a, b) => a.distanceKm - b.distanceKm);
+    } else if (type === "Fastest Response") {
+      filtered.sort((a, b) => a.responseTimeMins - b.responseTimeMins);
+    } else if (type === "Budget Friendly") {
+      filtered.sort((a, b) => a.hourlyRate - b.hourlyRate);
+    } else if (type === "Most Experienced") {
+      filtered.sort((a, b) => b.experienceYears - a.experienceYears);
+    } else {
+      // Default / Best Overall / AI Recommended
+      filtered.sort((a, b) => b.score - a.score);
+    }
+
+    res.json({
+      success: true,
+      query: { category, location, type },
+      data: filtered,
+      algorithmWeights: {
+        ratingWeight: "25%",
+        distanceWeight: "20%",
+        experienceWeight: "15%",
+        completionRateWeight: "15%",
+        responseTimeWeight: "10%",
+        pricingWeight: "10%",
+        availabilityWeight: "5%"
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 8. GET /api/v1/ai/worker-score/:id - Detailed breakdown of AI Score for a worker
+router.get("/worker-score/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    res.json({
+      success: true,
+      workerId: id,
+      overallScore: 96,
+      confidenceScore: 98,
+      breakdown: {
+        ratingScore: { score: 98, weight: "25%", contribution: 24.5, label: "4.9★ rating with 142 reviews" },
+        distanceScore: { score: 95, weight: "20%", contribution: 19.0, label: "1.2 km away from your location" },
+        experienceScore: { score: 90, weight: "15%", contribution: 13.5, label: "8 years professional experience" },
+        completionScore: { score: 99, weight: "15%", contribution: 14.8, label: "99% job completion rate" },
+        responseScore: { score: 94, weight: "10%", contribution: 9.4, label: "Under 12 mins average response" },
+        pricingScore: { score: 92, weight: "10%", contribution: 9.2, label: "Competitive hourly rate (₹250/hr)" },
+        availabilityScore: { score: 100, weight: "5%", contribution: 5.0, label: "Available today with emergency slot" }
+      },
+      recommendationReasons: [
+        "Closest verified expert to your pin location",
+        "Zero reported cancellations in the last 30 days",
+        "Top tier reliability badge awarded by KaamSathi AI"
+      ]
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 9. GET /api/v1/ai/demand - Demand Prediction & Insights
+router.get("/demand", (req, res) => {
+  try {
+    res.json({
+      success: true,
+      currentDemandLevel: "High Surge",
+      peakBookingHours: "5:00 PM - 8:00 PM",
+      topDemandedServices: ["Electrician (Wiring & MCB)", "Plumber (Leakage Repair)", "AC Servicing"],
+      fastestGrowingCities: ["Lucknow (Hazratganj)", "Delhi (South Ext)", "Noida (Sec 62)", "Gurugram (Phase 4)"],
+      estimatedAverageWaitingTimeMins: 14,
+      aiSuggestions: [
+        "Book electrical repairs before 4 PM to avoid peak surge hours.",
+        "High worker availability currently in South Delhi and Noida Sector 62."
+      ]
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 10. GET /api/v1/ai/pricing - Smart Pricing & Market Comparison
+router.get("/pricing", (req, res) => {
+  try {
+    const { category = "electrician" } = req.query;
+    res.json({
+      success: true,
+      category,
+      marketAverageHourlyRate: 320,
+      kaamSathiRecommendedHourlyRate: 250,
+      savingsPercentage: "22% lower than traditional agencies",
+      priceCategories: {
+        budget: "₹200 - ₹250 / hr",
+        average: "₹250 - ₹350 / hr",
+        premium: "₹350 - ₹500 / hr"
+      },
+      transparencyNote: "All prices include standard inspection with 0% worker wage commission."
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 export default router;

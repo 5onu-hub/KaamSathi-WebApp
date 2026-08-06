@@ -6,6 +6,7 @@ import axios from "axios";
 export function WorkerMessagesView() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterTab, setFilterTab] = useState<"all" | "unread" | "active" | "completed">("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,10 +17,15 @@ export function WorkerMessagesView() {
       .catch(() => {});
   }, []);
 
-  const filtered = conversations.filter(c => 
-    c.serviceCategory?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.participants?.some((p: any) => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filtered = conversations.filter(c => {
+    const matchesSearch = c.serviceCategory?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.participants?.some((p: any) => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    if (filterTab === "unread") return matchesSearch && (c.unreadCount?.w1 > 0);
+    if (filterTab === "active") return matchesSearch && (c.status === "active" || !c.status);
+    if (filterTab === "completed") return matchesSearch && (c.status === "completed");
+    return matchesSearch;
+  });
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-6">
@@ -35,51 +41,79 @@ export function WorkerMessagesView() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search customer chats..."
-            className="pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200 text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 w-64"
+            className="pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200 text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 w-64 shadow-xs"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm divide-y divide-gray-100 overflow-hidden">
-        {filtered.map(conv => {
-          const customer = conv.participants?.find((p: any) => p.role === "customer") || { name: "Rahul Verma", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" };
-          return (
-            <div 
-              key={conv._id}
-              onClick={() => navigate(`/messages/${conv._id}`)}
-              className="p-5 flex items-center justify-between hover:bg-gray-50/80 transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <img src={customer.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"} alt={customer.name} className="w-14 h-14 rounded-full object-cover border-2 border-blue-500" />
-                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{customer.name}</h4>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">
-                      {conv.serviceCategory || "Customer"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-600 line-clamp-1">{conv.lastMessage || "Tap to open secure chat"}</p>
-                </div>
-              </div>
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        {[
+          { id: "all", label: "All Chats" },
+          { id: "unread", label: "Unread" },
+          { id: "active", label: "Active Jobs" },
+          { id: "completed", label: "Completed" }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setFilterTab(tab.id as any)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              filterTab === tab.id ? "bg-blue-600 text-white shadow-md" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <span className="text-[11px] text-gray-400 font-semibold">{new Date(conv.lastMessageAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                  {conv.unreadCount?.w1 > 0 && (
-                    <div className="mt-1 w-5 h-5 bg-blue-600 text-white rounded-full text-[10px] font-black flex items-center justify-center mx-auto">
-                      {conv.unreadCount.w1}
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm divide-y divide-gray-100 overflow-hidden">
+        {filtered.length === 0 ? (
+          <div className="p-12 text-center text-gray-500 text-xs font-semibold">
+            No customer chats match your filter.
+          </div>
+        ) : (
+          filtered.map(conv => {
+            const customer = conv.participants?.find((p: any) => p.role === "customer") || { name: "Rahul Verma", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" };
+            return (
+              <div 
+                key={conv._id}
+                onClick={() => navigate(`/messages/${conv._id}`)}
+                className="p-5 flex items-center justify-between hover:bg-gray-50/80 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <img src={customer.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"} alt={customer.name} className="w-14 h-14 rounded-full object-cover border-2 border-blue-500 shadow-xs" />
+                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-black text-gray-900 text-base group-hover:text-blue-600 transition-colors">{customer.name}</h4>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">
+                        {conv.serviceCategory || "Customer"}
+                      </span>
                     </div>
-                  )}
+                    <p className="text-xs text-gray-600 line-clamp-1">{conv.lastMessage || "Tap to open secure chat"}</p>
+                  </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-blue-600 transition-colors" />
+
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <span className="text-[11px] text-gray-400 font-semibold">{new Date(conv.lastMessageAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    {conv.unreadCount?.w1 > 0 && (
+                      <div className="mt-1 w-5 h-5 bg-blue-600 text-white rounded-full text-[10px] font-black flex items-center justify-center mx-auto">
+                        {conv.unreadCount.w1}
+                      </div>
+                    )}
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-blue-600 transition-colors" />
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );
 }
+
+export default WorkerMessagesView;

@@ -34,6 +34,10 @@ const CustomerMessagesView = lazy(() => import("../pages/customer/CustomerMessag
 const CustomerSavedView = lazy(() => import("../pages/customer/CustomerSavedView").then(m => ({ default: m.CustomerSavedView })));
 const CustomerWalletView = lazy(() => import("../pages/customer/CustomerWalletView").then(m => ({ default: m.CustomerWalletView })));
 const CustomerPaymentsView = lazy(() => import("../pages/customer/CustomerPaymentsView").then(m => ({ default: m.CustomerPaymentsView })));
+const CustomerAiRecommendationsView = lazy(() => import("../pages/customer/CustomerAiRecommendationsView").then(m => ({ default: m.CustomerAiRecommendationsView })));
+const GamificationView = lazy(() => import("../pages/gamification/GamificationView").then(m => ({ default: m.GamificationView })));
+const EmergencyHiringView = lazy(() => import("../pages/customer/EmergencyHiringView").then(m => ({ default: m.EmergencyHiringView })));
+const LiveTrackingView = lazy(() => import("../pages/customer/LiveTrackingView").then(m => ({ default: m.LiveTrackingView })));
 
 const WorkerDashboard = lazy(() => import("../pages/WorkerDashboard").then(m => ({ default: m.WorkerDashboard })));
 const WorkerJobs = lazy(() => import("../pages/bookings/WorkerJobs").then(m => ({ default: m.WorkerJobs })));
@@ -43,13 +47,18 @@ const WorkerWalletView = lazy(() => import("../pages/worker/WorkerWalletView").t
 const WorkerMessagesView = lazy(() => import("../pages/worker/WorkerMessagesView").then(m => ({ default: m.WorkerMessagesView })));
 
 const BookingDetails = lazy(() => import("../pages/bookings/BookingDetails").then(m => ({ default: m.BookingDetails })));
+const BookingWizardPage = lazy(() => import("../pages/bookings/BookingWizardPage").then(m => ({ default: m.BookingWizardPage })));
+const BookingSuccessPage = lazy(() => import("../pages/bookings/BookingSuccessPage").then(m => ({ default: m.BookingSuccessPage })));
 const NotificationCenterView = lazy(() => import("../pages/notifications/NotificationCenterView").then(m => ({ default: m.NotificationCenterView })));
 const ChatRoomView = lazy(() => import("../pages/messages/ChatRoomView").then(m => ({ default: m.ChatRoomView })));
 
 const SignInPage = lazy(() => import("../pages/auth/SignInPage").then(m => ({ default: m.SignInPage })));
 const SignUpPage = lazy(() => import("../pages/auth/SignUpPage").then(m => ({ default: m.SignUpPage })));
+const AdminLoginPage = lazy(() => import("../pages/auth/AdminLoginPage").then(m => ({ default: m.AdminLoginPage })));
 const RoleSelectionPage = lazy(() => import("../pages/auth/RoleSelectionPage").then(m => ({ default: m.RoleSelectionPage })));
 const ProfileCompletionPage = lazy(() => import("../pages/auth/ProfileCompletionPage").then(m => ({ default: m.ProfileCompletionPage })));
+const WorkerOnboardingPage = lazy(() => import("../pages/auth/WorkerOnboardingPage").then(m => ({ default: m.WorkerOnboardingPage })));
+import { ProtectedRoute } from "../components/rbac/RBACComponents";
 
 const AdminDashboard = lazy(() => import("../pages/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
 const AdminDashboardView = lazy(() => import("../pages/admin/AdminDashboardView").then(m => ({ default: m.AdminDashboardView })));
@@ -67,6 +76,12 @@ const AdminReportsView = lazy(() => import("../pages/admin/AdminReportsView").th
 const AdminAiInsightsView = lazy(() => import("../pages/admin/AdminAiInsightsView").then(m => ({ default: m.AdminAiInsightsView })));
 const AdminAuditLogsView = lazy(() => import("../pages/admin/AdminAuditLogsView").then(m => ({ default: m.AdminAuditLogsView })));
 const AdminSettingsView = lazy(() => import("../pages/admin/AdminSettingsView").then(m => ({ default: m.AdminSettingsView })));
+const AdminServicesView = lazy(() => import("../pages/admin/AdminServicesView").then(m => ({ default: m.AdminServicesView })));
+const AdminReviewsView = lazy(() => import("../pages/admin/AdminReviewsView").then(m => ({ default: m.AdminReviewsView })));
+const AdminSupportView = lazy(() => import("../pages/admin/AdminSupportView").then(m => ({ default: m.AdminSupportView })));
+const CustomerSupportView = lazy(() => import("../pages/customer/CustomerSupportView").then(m => ({ default: m.CustomerSupportView })));
+const WorkerSupportView = lazy(() => import("../pages/worker/WorkerSupportView").then(m => ({ default: m.WorkerSupportView })));
+const ProfileMainView = lazy(() => import("../pages/profile/ProfileMainView").then(m => ({ default: m.ProfileMainView })));
 
 const ComingSoon = lazy(() => import("../pages/ComingSoon").then(m => ({ default: m.ComingSoon })));
 const Unauthorized = lazy(() => import("../pages/Unauthorized").then(m => ({ default: m.Unauthorized })));
@@ -83,14 +98,25 @@ export function AppRoutes() {
         {/* Standalone Auth & Chat Routes */}
         <Route path="/sign-in/*" element={<SignInPage />} />
         <Route path="/sign-up/*" element={<SignUpPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/role-selection" element={<RoleSelectionPage />} />
         <Route path="/profile-completion" element={<ProfileCompletionPage />} />
+        <Route path="/worker/onboarding" element={<ProtectedRoute allowedRole="worker"><WorkerOnboardingPage /></ProtectedRoute>} />
         <Route path="/messages/:conversationId" element={<ChatRoomView />} />
 
+        {/* Profile & Account Management Routes */}
+        <Route path="/profile" element={<ProfileMainView />} />
+        <Route path="/profile/edit" element={<ProfileMainView />} />
+        <Route path="/settings" element={<ProfileMainView />} />
+        <Route path="/security" element={<ProfileMainView />} />
+        <Route path="/preferences" element={<ProfileMainView />} />
+
         {/* 1. Admin Application Layout */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminLayout /></ProtectedRoute>}>
           <Route index element={<AdminDashboardView />} />
           <Route path="dashboard" element={<AdminDashboardView />} />
+          <Route path="services" element={<AdminServicesView />} />
+          <Route path="reviews" element={<AdminReviewsView />} />
           <Route path="users" element={<AdminUsersView />} />
           <Route path="workers" element={<AdminWorkersView />} />
           <Route path="verifications" element={<AdminVerificationsView />} />
@@ -105,10 +131,11 @@ export function AppRoutes() {
           <Route path="ai-insights" element={<AdminAiInsightsView />} />
           <Route path="audit-logs" element={<AdminAuditLogsView />} />
           <Route path="settings" element={<AdminSettingsView />} />
+          <Route path="support" element={<AdminSupportView />} />
         </Route>
 
         {/* 2. Customer Application Layout */}
-        <Route path="/customer" element={<CustomerLayout />}>
+        <Route path="/customer" element={<ProtectedRoute allowedRole="customer"><CustomerLayout /></ProtectedRoute>}>
           <Route path="dashboard" element={<CustomerDashboard />} />
           <Route path="bookings" element={<CustomerBookings />} />
           <Route path="profile" element={<CustomerProfileView />} />
@@ -116,14 +143,19 @@ export function AppRoutes() {
           <Route path="saved" element={<CustomerSavedView />} />
           <Route path="wallet" element={<CustomerWalletView />} />
           <Route path="payments" element={<CustomerPaymentsView />} />
+          <Route path="recommendations" element={<CustomerAiRecommendationsView />} />
           <Route path="notifications" element={<NotificationCenterView />} />
+          <Route path="gamification" element={<GamificationView />} />
+          <Route path="emergency" element={<EmergencyHiringView />} />
+          <Route path="tracking" element={<LiveTrackingView />} />
+          <Route path="support" element={<CustomerSupportView />} />
         </Route>
-        <Route path="/customer-dashboard" element={<CustomerLayout />}>
+        <Route path="/customer-dashboard" element={<ProtectedRoute allowedRole="customer"><CustomerLayout /></ProtectedRoute>}>
           <Route index element={<CustomerDashboard />} />
         </Route>
 
         {/* 3. Worker Application Layout */}
-        <Route path="/worker" element={<WorkerLayout />}>
+        <Route path="/worker" element={<ProtectedRoute allowedRole="worker"><WorkerLayout /></ProtectedRoute>}>
           <Route path="dashboard" element={<WorkerDashboard />} />
           <Route path="jobs" element={<WorkerJobs />} />
           <Route path="profile" element={<WorkerProfileView />} />
@@ -131,8 +163,11 @@ export function AppRoutes() {
           <Route path="wallet" element={<WorkerWalletView />} />
           <Route path="messages" element={<WorkerMessagesView />} />
           <Route path="notifications" element={<NotificationCenterView />} />
+          <Route path="gamification" element={<GamificationView />} />
+          <Route path="tracking" element={<LiveTrackingView />} />
+          <Route path="support" element={<WorkerSupportView />} />
         </Route>
-        <Route path="/worker-dashboard" element={<WorkerLayout />}>
+        <Route path="/worker-dashboard" element={<ProtectedRoute allowedRole="worker"><WorkerLayout /></ProtectedRoute>}>
           <Route index element={<WorkerDashboard />} />
         </Route>
 
@@ -152,10 +187,14 @@ export function AppRoutes() {
 
           {/* Workers Catalog & Details */}
           <Route path="/workers" element={<Workers />} />
+          <Route path="/find-workers" element={<Workers />} />
           <Route path="/workers/:id" element={<WorkerPublicProfile />} />
           <Route path="/workers/:workerId" element={<WorkerPublicProfile />} />
 
-          {/* Booking Details */}
+          {/* Booking Flow & Details */}
+          <Route path="/booking/:workerId" element={<BookingWizardPage />} />
+          <Route path="/checkout" element={<BookingWizardPage />} />
+          <Route path="/booking/success" element={<BookingSuccessPage />} />
           <Route path="/booking/:id" element={<BookingDetails />} />
           <Route path="/bookings/:bookingId" element={<BookingDetails />} />
 

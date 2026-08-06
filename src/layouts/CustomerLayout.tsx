@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   Wrench, Sparkles, Menu, X, Bell, LogOut, LayoutDashboard, 
   FileText, Bookmark, MessageSquare, Wallet, User as UserIcon, 
-  Search, MapPin, Settings, HelpCircle, ShieldCheck
+  Search, MapPin, Settings, HelpCircle, ShieldCheck, Trophy, ShieldAlert, Navigation
 } from "lucide-react";
 import { useRBAC } from "../components/rbac/RBACComponents";
 
@@ -22,7 +22,12 @@ export function CustomerLayout() {
     { label: "Saved Workers", path: "/customer/saved", icon: Bookmark },
     { label: "Messages", path: "/customer/messages", icon: MessageSquare },
     { label: "Wallet & Payments", path: "/customer/wallet", icon: Wallet },
+    { label: "AI Recommendations", path: "/customer/recommendations", icon: Sparkles },
+    { label: "Gamification & Loyalty", path: "/customer/gamification", icon: Trophy },
+    { label: "🚨 Emergency SOS Hiring", path: "/customer/emergency", icon: ShieldAlert },
+    { label: "📍 Live Worker Tracking", path: "/customer/tracking", icon: Navigation },
     { label: "AI Saathi", path: "/ai", icon: Sparkles },
+    { label: "Support & Help Desk", path: "/customer/support", icon: HelpCircle },
     { label: "Profile", path: "/customer/profile", icon: UserIcon },
     { label: "Notifications", path: "/customer/notifications", icon: Bell },
   ];

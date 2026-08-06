@@ -12,7 +12,11 @@ export function RoleSelectionPage() {
     localStorage.setItem("kaamsathi_role", selectedRole);
     toast.success(`Role selected: ${selectedRole.toUpperCase()}`);
     setTimeout(() => {
-      navigate("/profile-completion");
+      if (selectedRole === "worker") {
+        navigate("/worker/onboarding");
+      } else {
+        navigate("/customer-dashboard");
+      }
     }, 1000);
   };
 

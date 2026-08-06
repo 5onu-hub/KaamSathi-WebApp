@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 export function SignInPage() {
   const clerkPublishableKey = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
   const isClerkConfigured = clerkPublishableKey && !clerkPublishableKey.includes("pk_test_...");
+  const existingRole = localStorage.getItem("kaamsathi_role");
+  const targetRedirect = existingRole === "worker" ? "/worker-dashboard" : existingRole === "customer" ? "/customer-dashboard" : "/role-selection";
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -29,7 +31,7 @@ export function SignInPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
         <div className="bg-white py-8 px-6 shadow-xl rounded-3xl border border-gray-100 flex justify-center">
           {isClerkConfigured ? (
-            <ClerkSignIn routing="path" path="/sign-in" afterSignInUrl="/role-selection" />
+            <ClerkSignIn routing="path" path="/sign-in" afterSignInUrl={targetRedirect} />
           ) : (
             <div className="text-center space-y-4 py-4 w-full">
               <p className="text-xs text-amber-600 font-semibold bg-amber-50 p-3 rounded-xl border border-amber-200">

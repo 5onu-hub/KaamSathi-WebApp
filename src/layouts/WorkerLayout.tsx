@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   Wrench, Sparkles, Menu, X, Bell, LogOut, LayoutDashboard, 
   Briefcase, FileText, MessageSquare, Wallet, ShieldCheck, 
-  User as UserIcon, Settings, Activity, CheckCircle2
+  User as UserIcon, Settings, Activity, CheckCircle2, Trophy, Navigation, HelpCircle
 } from "lucide-react";
 import { useRBAC } from "../components/rbac/RBACComponents";
 
@@ -21,7 +21,10 @@ export function WorkerLayout() {
     { label: "Messages", path: "/worker/messages", icon: MessageSquare },
     { label: "Earnings & Payouts", path: "/worker/earnings", icon: Wallet },
     { label: "Wallet", path: "/worker/wallet", icon: Wallet },
+    { label: "Gamification & Rewards", path: "/worker/gamification", icon: Trophy },
+    { label: "📍 Live GPS Tracking", path: "/worker/tracking", icon: Navigation },
     { label: "AI Saathi Support", path: "/ai", icon: Sparkles },
+    { label: "Support & Help Desk", path: "/worker/support", icon: HelpCircle },
     { label: "Profile & Verification", path: "/worker/profile", icon: ShieldCheck },
     { label: "Notifications", path: "/worker/notifications", icon: Bell },
   ];

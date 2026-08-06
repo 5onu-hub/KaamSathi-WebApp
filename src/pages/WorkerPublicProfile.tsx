@@ -114,7 +114,7 @@ export function WorkerPublicProfile() {
               <Share2 className="w-4 h-4" />
             </button>
             <button 
-              onClick={() => setIsBookingOpen(true)}
+              onClick={() => navigate(`/booking/${workerId || "w1"}`)}
               className="px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-xl text-sm shadow-sm hover:bg-emerald-700 transition flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" /> Book Now
@@ -212,7 +212,7 @@ export function WorkerPublicProfile() {
                 </button>
 
                 <button 
-                  onClick={() => setIsBookingOpen(true)}
+                  onClick={() => navigate(`/booking/${workerId || "w1"}`)}
                   className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2"
                 >
                   <Calendar className="w-4 h-4" /> Book Service Now
@@ -528,7 +528,7 @@ export function WorkerPublicProfile() {
               </div>
 
               <button 
-                onClick={() => setIsBookingOpen(true)}
+                onClick={() => navigate(`/booking/${workerId || "w1"}`)}
                 className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm shadow-md transition flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4" /> Book Appointment Now
