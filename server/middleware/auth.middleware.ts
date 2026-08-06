@@ -80,6 +80,10 @@ export const requireRole = (allowedRoles: string | string[]) => {
   };
 };
 
+export const requireCustomer = requireRole("customer");
+export const requireWorker = requireRole("worker");
+export const requireAdmin = requireRole("admin");
+
 export const requireProfileCompletion = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.dbUser) {
     return res.status(401).json({ success: false, message: "Unauthorized" });

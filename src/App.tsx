@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { AppRoutes } from "./routes/AppRoutes";
+import { RBACProvider } from "./components/rbac/RBACComponents";
 
 const queryClient = new QueryClient();
 
@@ -18,11 +19,14 @@ export default function App() {
     <ClerkProvider publishableKey={clerkPubKey}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AppRoutes />
+          <RBACProvider>
+            <AppRoutes />
+          </RBACProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ClerkProvider>
   );
 }
+
 
 

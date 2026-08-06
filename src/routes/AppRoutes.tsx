@@ -1,6 +1,9 @@
 import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import { RootLayout } from "../layouts/RootLayout";
+import { GuestLayout } from "../layouts/GuestLayout";
+import { CustomerLayout } from "../layouts/CustomerLayout";
+import { WorkerLayout } from "../layouts/WorkerLayout";
+import { AdminLayout } from "../layouts/AdminLayout";
 
 // Loading Fallback Component
 const LoadingFallback = () => (
@@ -19,6 +22,7 @@ const CategoryServiceResolver = lazy(() => import("../pages/services/CategorySer
 const DynamicServiceDetailsPage = lazy(() => import("../pages/services/DynamicServiceDetailsPage").then(m => ({ default: m.DynamicServiceDetailsPage })));
 const Workers = lazy(() => import("../pages/Workers").then(m => ({ default: m.Workers })));
 const WorkerDetails = lazy(() => import("../pages/WorkerDetails").then(m => ({ default: m.WorkerDetails })));
+const WorkerPublicProfile = lazy(() => import("../pages/WorkerPublicProfile").then(m => ({ default: m.WorkerPublicProfile })));
 const CustomerDashboard = lazy(() => import("../pages/CustomerDashboard").then(m => ({ default: m.CustomerDashboard })));
 const CustomerBookings = lazy(() => import("../pages/bookings/CustomerBookings").then(m => ({ default: m.CustomerBookings })));
 const CustomerProfileView = lazy(() => import("../pages/customer/CustomerProfileView").then(m => ({ default: m.CustomerProfileView })));
@@ -44,7 +48,6 @@ const RoleSelectionPage = lazy(() => import("../pages/auth/RoleSelectionPage").t
 const ProfileCompletionPage = lazy(() => import("../pages/auth/ProfileCompletionPage").then(m => ({ default: m.ProfileCompletionPage })));
 
 const AdminDashboard = lazy(() => import("../pages/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
-const AdminLayout = lazy(() => import("../pages/admin/AdminLayout").then(m => ({ default: m.AdminLayout })));
 const AdminDashboardView = lazy(() => import("../pages/admin/AdminDashboardView").then(m => ({ default: m.AdminDashboardView })));
 const AdminUsersView = lazy(() => import("../pages/admin/AdminUsersView").then(m => ({ default: m.AdminUsersView })));
 const AdminWorkersView = lazy(() => import("../pages/admin/AdminWorkersView").then(m => ({ default: m.AdminWorkersView })));
@@ -80,7 +83,7 @@ export function AppRoutes() {
         <Route path="/profile-completion" element={<ProfileCompletionPage />} />
         <Route path="/messages/:conversationId" element={<ChatRoomView />} />
 
-        {/* Admin Nested Panel Routes */}
+        {/* 1. Admin Application Layout */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardView />} />
           <Route path="dashboard" element={<AdminDashboardView />} />
@@ -100,9 +103,37 @@ export function AppRoutes() {
           <Route path="settings" element={<AdminSettingsView />} />
         </Route>
 
-        {/* Root Layout Application Routes */}
-        <Route element={<RootLayout />}>
-          {/* Landing Page */}
+        {/* 2. Customer Application Layout */}
+        <Route path="/customer" element={<CustomerLayout />}>
+          <Route path="dashboard" element={<CustomerDashboard />} />
+          <Route path="bookings" element={<CustomerBookings />} />
+          <Route path="profile" element={<CustomerProfileView />} />
+          <Route path="messages" element={<CustomerMessagesView />} />
+          <Route path="saved" element={<CustomerSavedView />} />
+          <Route path="wallet" element={<CustomerWalletView />} />
+          <Route path="payments" element={<CustomerPaymentsView />} />
+          <Route path="notifications" element={<NotificationCenterView />} />
+        </Route>
+        <Route path="/customer-dashboard" element={<CustomerLayout />}>
+          <Route index element={<CustomerDashboard />} />
+        </Route>
+
+        {/* 3. Worker Application Layout */}
+        <Route path="/worker" element={<WorkerLayout />}>
+          <Route path="dashboard" element={<WorkerDashboard />} />
+          <Route path="jobs" element={<WorkerJobs />} />
+          <Route path="profile" element={<WorkerProfileView />} />
+          <Route path="earnings" element={<WorkerEarningsView />} />
+          <Route path="wallet" element={<WorkerWalletView />} />
+          <Route path="messages" element={<WorkerMessagesView />} />
+          <Route path="notifications" element={<NotificationCenterView />} />
+        </Route>
+        <Route path="/worker-dashboard" element={<WorkerLayout />}>
+          <Route index element={<WorkerDashboard />} />
+        </Route>
+
+        {/* 4. Guest / Public Marketing Layout */}
+        <Route element={<GuestLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/ai" element={<AIPage />} />
           <Route path="/search" element={<SearchHome />} />
@@ -117,30 +148,8 @@ export function AppRoutes() {
 
           {/* Workers Catalog & Details */}
           <Route path="/workers" element={<Workers />} />
-          <Route path="/workers/:id" element={<WorkerDetails />} />
-          <Route path="/worker/:id" element={<WorkerDetails />} />
-          <Route path="/worker/:workerId" element={<WorkerDetails />} />
-
-          {/* Customer Application Pages */}
-          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-          <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-          <Route path="/customer/bookings" element={<CustomerBookings />} />
-          <Route path="/customer/profile" element={<CustomerProfileView />} />
-          <Route path="/customer/messages" element={<CustomerMessagesView />} />
-          <Route path="/customer/saved" element={<CustomerSavedView />} />
-          <Route path="/customer/wallet" element={<CustomerWalletView />} />
-          <Route path="/customer/payments" element={<CustomerPaymentsView />} />
-          <Route path="/customer/notifications" element={<NotificationCenterView />} />
-
-          {/* Worker Application Pages */}
-          <Route path="/worker/dashboard" element={<WorkerDashboard />} />
-          <Route path="/worker-dashboard" element={<WorkerDashboard />} />
-          <Route path="/worker/jobs" element={<WorkerJobs />} />
-          <Route path="/worker/profile" element={<WorkerProfileView />} />
-          <Route path="/worker/earnings" element={<WorkerEarningsView />} />
-          <Route path="/worker/wallet" element={<WorkerWalletView />} />
-          <Route path="/worker/messages" element={<WorkerMessagesView />} />
-          <Route path="/worker/notifications" element={<NotificationCenterView />} />
+          <Route path="/workers/:id" element={<WorkerPublicProfile />} />
+          <Route path="/workers/:workerId" element={<WorkerPublicProfile />} />
 
           {/* Booking Details */}
           <Route path="/booking/:id" element={<BookingDetails />} />

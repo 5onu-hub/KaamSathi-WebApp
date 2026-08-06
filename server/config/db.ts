@@ -3,14 +3,15 @@ import mongoose from "mongoose";
 export async function connectDB() {
   try {
     const uri = process.env.MONGODB_URI;
-    if (!uri) {
-      console.warn("MONGODB_URI not defined in environment variables.");
+    if (!uri || uri.includes("placeholder")) {
+      console.log("Running in robust JSON/Memory Seed Mode for KaamSathi.");
       return;
     }
     await mongoose.connect(uri);
     console.log("MongoDB Connected Successfully");
   } catch (error) {
-    console.error("MongoDB Connection Failed:", error);
-    process.exit(1);
+    console.warn("MongoDB Connection warning, operating in standalone memory/JSON mode:", error instanceof Error ? error.message : error);
   }
 }
+
+
